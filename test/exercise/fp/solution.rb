@@ -5,17 +5,10 @@ module Exercise
       # film["name"], film["rating_kinopoisk"], film["rating_imdb"],
       # film["genres"], film["year"], film["access_level"], film["country"]
       def rating(array)
-        size = 0
-
-        score = array.reduce(0) do |sum, film|
-          if !film['country'].nil? && film['country'].split(',').length > 1 && !film['rating_kinopoisk'].nil? && film['rating_kinopoisk'].to_f.positive?
-            sum += film['rating_kinopoisk'].to_f
-            size += 1
-          end
-          sum
-        end
-
-        score / size
+        scores = array.map { |film| film['country'].to_s.split(',').length > 1 ? film['rating_kinopoisk'].to_f : 0 }
+        total_score = scores.reduce(0, :+)
+        amount = scores.map { |score| score.positive? ? 1 : 0 }.reduce(0, :+)
+        total_score / amount
       end
 
       def chars_count(films, threshold)
