@@ -6,56 +6,30 @@ module Exercise
 
       # Написать свою функцию my_each
       def my_each
-        count = 0
-        size = self.size
-
-        while count < size
-          yield(self[count])
-          count += 1
+        for item in self
+          yield item
         end
-
-        self
       end
 
       # Написать свою функцию my_map
       def my_map
-        result = MyArray.new
-        count = 0
-        size = self.size
-
-        while count < size
-          result << yield(self[count])
-          count += 1
-        end
-
-        result
+        my_reduce(self.class.new) { |arr, item| arr << (yield item) }
       end
 
       # Написать свою функцию my_compact
       def my_compact
-        result = MyArray.new
-        count = 0
-        size = self.size
-
-        while count < size
-          result << self[count] unless self[count].nil?
-          count += 1
-        end
-        result
+        my_reduce(self.class.new) { |arr, item| item.nil? ? arr : arr << item }
       end
 
       # Написать свою функцию my_reduce
       def my_reduce(initial_value = nil)
-        count = 0
-        size = self.size
-
-        head, *tail = self
-        acc = initial_value.nil? ? head : initial_value.to_i
-        arr = initial_value.nil? ? tail : self
-
-        while count < size
-          acc = yield(acc, arr[count]) unless arr[count].nil?
-          count += 1
+        acc = initial_value
+        for i in self
+          if acc.nil?
+            acc = i
+            next
+          end
+          acc = yield(acc, i)
         end
         acc
       end
