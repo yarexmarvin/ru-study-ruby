@@ -5,10 +5,18 @@ module Exercise
       # Использовать свои написанные функции для реализации следующих - можно.
 
       # Написать свою функцию my_each
-      def my_each
-        for item in self
-          yield item
-        end
+      def my_each(&block)
+        head, *tail = self
+
+        tail = MyArray.new(tail)
+
+        block.call(head)
+
+        return if tail.empty?
+
+        tail.my_each(&block)
+
+        self
       end
 
       # Написать свою функцию my_map
@@ -22,15 +30,8 @@ module Exercise
       end
 
       # Написать свою функцию my_reduce
-      def my_reduce(initial_value = nil)
-        acc = initial_value
-        for i in self
-          if acc.nil?
-            acc = i
-            next
-          end
-          acc = yield(acc, i)
-        end
+      def my_reduce(acc = nil)
+        my_each { |element| acc = acc.nil? ? element : yield(acc, element) }
         acc
       end
     end
